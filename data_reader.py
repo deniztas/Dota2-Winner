@@ -1,6 +1,5 @@
 import numpy as np
 from json_reader import jsonReader
-from IPython import embed
 
 teams = {1: "Team 1", -1: "Team 2"}
 heroes = jsonReader('heroes')
@@ -19,14 +18,31 @@ def datasetFormatter(data):
     obj["team2_heroes"] = []
     for index, team in enumerate(data[4:]):
         if team == 1:
-            obj["team2_heroes"].append(index)
+            obj["team1_heroes"].append(heroes[index+1])
         elif team == -1:
-            obj["team1_heroes"].append(index)
+            obj["team2_heroes"].append(heroes[index+1])
     return obj
 
-trainData = np.genfromtxt('dataset/dota2Train.csv', delimiter=',')
-trainFormatted = list(map(datasetFormatter, trainData))
-testData = np.genfromtxt('dataset/dota2Test.csv', delimiter=',')
-testFormatted = list(map(datasetFormatter, trainData))
+def datasetChecker(data):
+    data = list(map(int, data))
+    data[0] = data[0] if data[0] in teams else np.nan
+    data[1] = data[1] if data[1] in regions else np.nan
+    data[2] = data[2] if data[2] in mods else np.nan
+    data[3] = data[3] if data[3] in lobbies else np.nan
+    team1, team2 = [], []
+    for index, team in enumerate(data[4:]):
+        if team == 1:
+            team1.append(index)
+        elif team == -1:
+            team2.append(index)
+    data[4] = np.nan if len(team1) != 5 or len(team2) != 5 else data[4]
+    return data
 
-embed()
+def getDataset():
+    trainData = np.genfromtxt('dataset/dota2Train.csv', delimiter=',')
+    testData = np.genfromtxt('dataset/dota2Test.csv', delimiter=',')
+    
+    trainChecked = list(map(datasetChecker, trainData))
+    testChecked = list(map(datasetChecker, testData))
+
+    return np.asarray(trainChecked), np.asarray(testChecked)
