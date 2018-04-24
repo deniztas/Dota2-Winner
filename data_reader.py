@@ -18,9 +18,9 @@ def datasetFormatter(data):
     obj["team2_heroes"] = []
     for index, team in enumerate(data[4:]):
         if team == 1:
-            obj["team1_heroes"].append(heroes[index+1])
+            obj["team1_heroes"].append(heroes[index+1]['localized_name'])
         elif team == -1:
-            obj["team2_heroes"].append(heroes[index+1])
+            obj["team2_heroes"].append(heroes[index+1]['localized_name'])
     return obj
 
 def datasetChecker(data):
@@ -38,11 +38,11 @@ def datasetChecker(data):
     data[4] = np.nan if len(team1) != 5 or len(team2) != 5 else data[4]
     return data
 
-def getDataset():
+def getDataset(func = datasetChecker):
     trainData = np.genfromtxt('dataset/dota2Train.csv', delimiter=',')
     testData = np.genfromtxt('dataset/dota2Test.csv', delimiter=',')
     
-    trainChecked = list(map(datasetChecker, trainData))
-    testChecked = list(map(datasetChecker, testData))
+    trainChecked = list(map(func, trainData))
+    testChecked = list(map(func, testData))
 
     return np.asarray(trainChecked), np.asarray(testChecked)
