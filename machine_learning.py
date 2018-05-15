@@ -1,17 +1,11 @@
 import numpy as np
 import pandas as pd
 from data_reader import getDataset
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, AdaBoostClassifier, BaggingClassifier, ExtraTreesClassifier
-from sklearn.svm import LinearSVC, SVC
-from sklearn.tree import DecisionTreeClassifier, ExtraTreeClassifier
-from sklearn.calibration import CalibratedClassifierCV
-from sklearn.dummy import DummyClassifier
-from sklearn.linear_model import LogisticRegression, LogisticRegressionCV, RidgeClassifier, RidgeClassifierCV, SGDClassifier
-from sklearn.naive_bayes import BernoulliNB, MultinomialNB
-from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.semi_supervised import LabelPropagation
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix, recall_score, precision_score
 from IPython import embed
 
 ### Step 1) Preprocessing Dataset

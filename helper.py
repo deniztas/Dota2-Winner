@@ -1,13 +1,20 @@
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 import numpy as np
-from json_reader import jsonReader
+import json
+from IPython import embed
 
-teams = {1: "Team 1", -1: "Team 2"}
-heroes = jsonReader('heroes')
-lobbies = jsonReader('lobbies')
-mods = jsonReader('mods')
-regions = jsonReader('regions')
+def JsonReader(fileName):
+    fileReader = open("json/" + fileName + ".json", "r")
+    itemList = json.load(fileReader)[fileName]
+    fileReader.close()
+    
+    itemDict = {}
+    for item in itemList:
+        itemDict[item['id']] = item
+    return itemDict
 
-def datasetFormatter(data):
+def DatasetFormatter(data, infoObject):
+    heroes, teams, regions, mods, lobbies = infoObject['heroes'], infoObject['teams'], infoObject['regions'], infoObject['mods'], infoObject['lobbies']
     data = list(map(int, data))
     obj = {}
     obj["winner"] = teams[data[0]] if data[0] in teams else "Unknown"
@@ -23,7 +30,8 @@ def datasetFormatter(data):
             obj["team2_heroes"].append(heroes[index+1]['localized_name'])
     return obj
 
-def datasetChecker(data):
+def DataControl(data, infoObject):
+    _, teams, regions, mods, lobbies = infoObject['heroes'], infoObject['teams'], infoObject['regions'], infoObject['mods'], infoObject['lobbies']
     data = list(map(int, data))
     data[0] = data[0] if data[0] in teams else np.nan
     data[1] = data[1] if data[1] in regions else np.nan
@@ -38,11 +46,7 @@ def datasetChecker(data):
     data[4] = np.nan if len(team1) != 5 or len(team2) != 5 else data[4]
     return data
 
-def getDataset(func = datasetChecker):
-    trainData = np.genfromtxt('dataset/dota2Train.csv', delimiter=',')
-    testData = np.genfromtxt('dataset/dota2Test.csv', delimiter=',')
-    
-    trainChecked = list(map(func, trainData))
-    testChecked = list(map(func, testData))
-
-    return np.asarray(trainChecked), np.asarray(testChecked)
+def Scorer(estimator, x, y):
+    yPred = estimator.predict(x)
+    accr, prec, recl = (accuracy_score(y, yPred), precision_score(y, yPred, average='macro'), recall_score(y, yPred, average='macro'))
+    return accr, prec, recl
